@@ -495,6 +495,8 @@ Display.prototype.isScrolledToBottom = function() {
 	// As per https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight
 	result = this._display.scrollHeight - this._display.scrollTop === this._display.clientHeight;
 
+	console.log('isScrolledToBottom(): scrollHeight=', this._display.scrollHeight, ' scrollTop=', this._display.scrollTop, ' clientHeight=', this._display.clientHeight, ' -> ', result);
+
 	return result;
 }
 
