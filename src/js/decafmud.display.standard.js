@@ -489,12 +489,21 @@ Display.prototype.message = function(text, className, needLine) {
 	this.doScroll();
 }
 
+Display.prototype.isScrolledToBottom = function() {
+	var result;
+
+	// As per https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight
+	result = this._display.scrollHeight - this._display.scrollTop === this._display.clientHeight;
+
+	return result;
+}
+
 /** Determine if we should be scrolling to the bottom of the output, and do so
     after a short delay if we should. Otherwise, display an element letting the
 	user know they have have content to read if they scroll down. */
 Display.prototype.shouldScroll = function(addTarget) {
 	if ( this.willScroll !== undefined || this._display.style.overflowY === 'hidden' ) { return; }
-	this.willScroll = this._display.scrollTop >= (this._display.scrollHeight - this._display.offsetHeight);
+	this.willScroll = this.isScrolledToBottom();
 	
 	// If we aren't scrolling, and the element isn't there, add our scroll helper.
 	if ( addTarget !== false && this.willScroll === false && !this.scrollTarget) {
@@ -550,9 +559,9 @@ Display.prototype.scroll = function() {
 /** If we've scrolled to the end, kill the scroll helper. */
 Display.prototype.onScroll = function() {
 	if ( this.scrollTarget === undefined ) { return; }
-	if (!(this._display.scrollTop >= (this._display.scrollHeight - this._display.offsetHeight))) {
-		return; }
-	
+
+	if ( !this.isScrolledToBottom() ) { return; }
+
 	if ( this.scrollTarget ) {
 		this.scrollTarget.parentNode.removeChild(this.scrollTarget);
 		this.scrollTarget = undefined; }
